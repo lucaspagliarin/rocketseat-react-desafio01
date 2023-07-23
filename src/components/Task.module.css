@@ -38,9 +38,19 @@
   cursor: pointer;
 }
 
+.task input[type="checkbox"]:hover {
+  background: var(--blue-dark-opaque);
+  border: 0.1rem solid var(--blue-dark);
+}
+
 .task input[type="checkbox"]:checked {
   background: var(--purple-dark);
   border: 0.1rem solid var(--purple-dark);
+}
+
+.task input[type="checkbox"]:checked:hover {
+  background: var(--purple);
+  border: 0.1rem solid var(--purple);
 }
 
 .task input[type="checkbox"]:checked::before {
@@ -54,4 +64,19 @@
   position: relative;
   bottom: 0.35rem;
   left: 0.1rem;
+}
+
+.task button {
+  background: transparent;
+  border: 0;
+  color: var(--gray-300);
+  cursor: pointer;
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 4px;
+}
+
+.task button:hover {
+  background: var(--gray-400);
+  color: var(--danger);
 }

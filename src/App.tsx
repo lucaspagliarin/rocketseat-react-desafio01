@@ -15,7 +15,7 @@ export function App() {
         <form className={styles.newTodo}>
           <textarea 
             name='comment'
-            placeholder='Adicione uma nova tarefa '
+            placeholder='Adicione uma nova tarefa'
             required
           />
           <button>
