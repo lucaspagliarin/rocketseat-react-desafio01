@@ -9,32 +9,10 @@ import { Header } from './components/Header';
 import { Task, ITask } from './components/Task';
 import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react';
 
-
-const taskList = [
-  {
-    id: uuidv4(),
-    description: "Aoooo",
-    isCompleted: false
-  },
-  {
-    id: uuidv4(),
-    description: "dkad aksdoaskd  koadodk lorem",
-    isCompleted: true
-  },
-  {
-    id: uuidv4(),
-    description: "dkad aksdoaskd  koadodk lorem",
-    isCompleted: true
-  }
-]
-
-
-
 export function App() {
-  const [ tasks, setTasks ] = useState<ITask[]>(taskList)
+  const [ tasks, setTasks ] = useState<ITask[]>([])
   const [ newTaskText, setNewTaskText ] = useState('')
   const [ completedTaskList, setCompletedTaskList ] = useState(tasks.filter(task => (task.isCompleted == true)))
-
 
   function handleCreateNewTask(event: FormEvent) {
     event.preventDefault();
@@ -148,5 +126,3 @@ export function App() {
     </div>
   )
 }
-
-export default App
