@@ -1,21 +1,126 @@
 import './global.css'
 import styles from './App.module.css'
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { PlusCircle, ClipboardText } from 'phosphor-react'
 
 import { Header } from './components/Header';
-import { Task } from './components/Task';
+import { Task, ITask } from './components/Task';
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react';
+
+
+const taskList = [
+  {
+    id: uuidv4(),
+    description: "Aoooo",
+    isCompleted: false
+  },
+  {
+    id: uuidv4(),
+    description: "dkad aksdoaskd  koadodk lorem",
+    isCompleted: true
+  },
+  {
+    id: uuidv4(),
+    description: "dkad aksdoaskd  koadodk lorem",
+    isCompleted: true
+  }
+]
+
+
 
 export function App() {
+  const [ tasks, setTasks ] = useState<ITask[]>(taskList)
+  const [ newTaskText, setNewTaskText ] = useState('')
+  const [ completedTaskList, setCompletedTaskList ] = useState(tasks.filter(task => (task.isCompleted == true)))
+
+
+  function handleCreateNewTask(event: FormEvent) {
+    event.preventDefault();
+    
+    const newTaskList = [
+      {
+        id: uuidv4(),
+        description: newTaskText,
+        isCompleted: false,
+      }, ...tasks
+    ]
+    setTasks(newTaskList)
+
+    setNewTaskText('');
+  }
+
+  function updateTask(taskToUpdate: ITask){
+    const newTasks = tasks.map(task => 
+      task.id === taskToUpdate.id
+      ? { ...task, isCompleted: taskToUpdate.isCompleted } 
+      : task
+    )
+
+    setCompletedTaskList(newTasks.filter(task => (task.isCompleted == true)))
+    setTasks(newTasks)
+  }
+
+  function deleteTask(taskToDelete: ITask) {
+    const newTasks = tasks.filter(task => task.id !== taskToDelete.id)
+
+    setCompletedTaskList(newTasks.filter(task => (task.isCompleted == true)))
+    setTasks(newTasks)   
+  }
+
+  function handleNewTaskText(event: ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('')
+    setNewTaskText(event.target.value)
+  }
+
+  function handleNewTaskInvalidText(event: InvalidEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('Esse campo é obrigatório')
+  }
+
+  function renderTaskList(tasks: ITask[]) {
+    if (tasks.length == 0) {
+      return (
+        <div className={styles.taskListEmpty}>
+        <ClipboardText size={56} />
+        <strong>Você ainda não tem tarefas cadastradas</strong>
+        <span>Crie tarefas e organize seus itens a fazer</span>
+      </div>
+      )
+      } else {
+        return(
+          <div className={styles.taskListFilled}>
+            {tasks.map(task => {
+              return (
+                <Task 
+                  key={task.id} 
+                  id={task.id} 
+                  description={task.description} 
+                  isCompleted={task.isCompleted} 
+                  onUpdateTask={updateTask}
+                  onDeleteTask={deleteTask}
+                />
+              )
+            })}
+         </div>
+        )
+        
+      }
+  
+  }
+
   return (
     <div>
       <Header />
 
       <div className={styles.wrapper}>
-        <form className={styles.newTodo}>
+        <form className={styles.newTodo} onSubmit={handleCreateNewTask}>
           <textarea 
             name='comment'
             placeholder='Adicione uma nova tarefa'
+            value={newTaskText}
+            onChange={handleNewTaskText}
+            onInvalid={handleNewTaskInvalidText}
             required
           />
           <button>
@@ -27,26 +132,16 @@ export function App() {
           <div className={styles.taskHeader}>
             <div className={styles.createdTask}>
               <strong >Tarefas Criadas</strong> 
-              <div className={styles.counter}>5</div>
+              <div className={styles.counter}>{tasks.length}</div>
             </div>
             <div className={styles.completedTask}>
               <strong >Concluídas</strong>
-              <div className={styles.counter}>2 de 5</div>
+              <div className={styles.counter}>{completedTaskList.length} de {tasks.length}</div>
             </div>
           </div>
-          {/* <div className={styles.taskListEmpty}>
-            <ClipboardText size={56} />
-            <strong>Você ainda não tem tarefas cadastradas</strong>
-            <span>Crie tarefas e organize seus itens a fazer</span>
-          </div> */}
-          <div className={styles.taskListFilled}>
-            <Task />
-            <Task />
-            <Task />
-            <Task />
-            <Task />
-            <Task />
-          </div>
+
+          {renderTaskList(tasks)}
+
         </div>
       </div>
 

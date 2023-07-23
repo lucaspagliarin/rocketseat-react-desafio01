@@ -3,15 +3,43 @@ import styles from './Task.module.css';
 
 import { Trash } from "phosphor-react";
 
-export function Task() {
-  const [isChecked, setIsChecked] = useState(false)
+export interface ITask {
+  id: string;
+  description: string;
+  isCompleted: boolean;
+}
 
+interface ITaskProps extends ITask {
+  onUpdateTask: (task: ITask) => void;
+  onDeleteTask: (task:ITask) => void;
+}
+
+export function Task({ id, description, isCompleted, onUpdateTask, onDeleteTask }: ITaskProps) {
+  const [isChecked, setIsChecked] = useState(isCompleted)
+  
+  function handleCheckTask() {
+    setIsChecked((isChecked) => !isChecked); 
+   
+    onUpdateTask({
+      id,
+      description,
+      isCompleted: !isChecked
+    })
+  }
+  function handleDeleteTask() {
+    
+    onDeleteTask({
+      id,
+      description,
+      isCompleted
+    })
+  }
 
   return (
     <div className={styles.task}>
-      <input type="checkbox" checked={isChecked} onChange={() => setIsChecked((prev) => !prev)}/>
-      <p className={isChecked ? styles.isChecked : styles.notChecked }>Integer urna interdum massa libero auctor neque turpis turpis semper. Duis vel sed fames integer.</p>
-      <button title='Deletar Tarefa'><Trash size={14}/></button>
+      <input type="checkbox" checked={isChecked} onChange={handleCheckTask}/>
+      <p className={isChecked ? styles.isChecked : styles.notChecked }>{description}</p>
+      <button title='Deletar Tarefa' onClick={handleDeleteTask}><Trash size={14}/></button>
     </div>
   )
 }
